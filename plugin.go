@@ -22,7 +22,7 @@ func (p *Plugin) OnRegister() {
 	p.AdminNames.OnInitResources(p, func(e *adminplugin.AdminEvent) {
 		e.Admin.AddResource(&QorAddress{}, &adminplugin.Config{Setup: PrepareResource})
 	})
-	db.DisNames(p).DBOnMigrateGorm(func(e *db.GormDBEvent) error {
+	db.Events(p).DBOnMigrateGorm(func(e *db.GormDBEvent) error {
 		return e.DB.AutoMigrate(&QorAddress{}, &QorAddressPhone{}).Error
 	})
 }
