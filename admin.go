@@ -9,7 +9,7 @@ import (
 )
 
 type AddressGetter interface {
-	GetQorAddress() *QorAddress
+	GetQorAddress() *Address
 }
 
 func AddSubResource(res *admin.Resource, value interface{}, fieldName ...string) *admin.Resource {
@@ -18,7 +18,7 @@ func AddSubResource(res *admin.Resource, value interface{}, fieldName ...string)
 	}
 	return res.AddResource(&admin.SubConfig{FieldName: fieldName[0]}, value, &admin.Config{
 		Setup: func(r *admin.Resource) {
-			r.SetI18nModel(&QorAddress{})
+			r.SetI18nModel(&Address{})
 			PrepareResource(r)
 			res.SetMeta(&admin.Meta{Name: fieldName[0], Resource: r})
 		},
@@ -28,7 +28,7 @@ func AddSubResource(res *admin.Resource, value interface{}, fieldName ...string)
 func PrepareResource(res *admin.Resource) {
 	Admin := res.GetAdmin()
 	admincommon.RecordInfoFields(res)
-	phone.AddSubResource(res, &QorAddressPhone{})
+	phone.AddSubResource(res, &AddressPhone{})
 	countryRes := geocode.GetCountryResource(Admin)
 	countryMeta := res.SetMeta(&admin.Meta{
 		Name: "Country",
@@ -38,8 +38,8 @@ func PrepareResource(res *admin.Resource) {
 		},
 		FormattedValuer: func(record interface{}, context *qor.Context) interface{} {
 			if record != nil {
-				var adr *QorAddress
-				if r, ok := record.(*QorAddress); ok {
+				var adr *Address
+				if r, ok := record.(*Address); ok {
 					adr = r
 				} else if r, ok := record.(AddressGetter); ok {
 					adr = r.GetQorAddress()
@@ -54,8 +54,8 @@ func PrepareResource(res *admin.Resource) {
 		},
 		Valuer: func(record interface{}, context *qor.Context) interface{} {
 			if record != nil {
-				var adr *QorAddress
-				if r, ok := record.(*QorAddress); ok {
+				var adr *Address
+				if r, ok := record.(*Address); ok {
 					adr = r
 				} else if r, ok := record.(AddressGetter); ok {
 					adr = r.GetQorAddress()
@@ -81,5 +81,5 @@ func PrepareResource(res *admin.Resource) {
 }
 
 func GetResource(Admin *admin.Admin) *admin.Resource {
-	return Admin.GetResourceByID("QorAddress")
+	return Admin.GetResourceByID("Address")
 }

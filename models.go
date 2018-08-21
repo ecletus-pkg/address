@@ -11,19 +11,19 @@ import (
 	"github.com/moisespsena-go/aorm"
 )
 
-type QorAddressPhone struct {
-	phone.QorPhone
+type AddressPhone struct {
+	phone.Phone
 	AddressID string `gorm:"size:24"`
 }
 
-func (p *QorAddressPhone) Clean(db *aorm.DB) {
-	utils.TrimStrings(&p.Note, &p.Phone)
+func (p *AddressPhone) Clean(db *aorm.DB) {
+	utils.TrimStrings(&p.Note, &p.Phone.Phone)
 }
 
-type QorAddress struct {
+type Address struct {
 	common.Model
 	mixins.CreationUpdationMixin
-	Phones       []QorAddressPhone      `gorm:"foreignkey:AddressID"`
+	Phones       []AddressPhone         `gorm:"foreignkey:AddressID"`
 	ContactName  string                 `gorm:"size:255"`
 	RegionID     string                 `gorm:"size:10"`
 	Region       *geocode.GeoCodeRegion `gorm:"SAVE_ASSOCIATIONS:false"`
@@ -31,11 +31,11 @@ type QorAddress struct {
 	AddressLine2 string                 `gorm:"size:255"`
 }
 
-func (e *QorAddress) Clean(db *aorm.DB) {
+func (e *Address) Clean(db *aorm.DB) {
 	utils.TrimStrings(&e.ContactName, &e.AddressLine1, &e.AddressLine2)
 }
 
-func (a *QorAddress) Stringify() string {
+func (a *Address) Stringify() string {
 	var parts []string
 	if a.ContactName != "" {
 		parts = append(parts, a.ContactName)

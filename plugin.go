@@ -20,9 +20,9 @@ func (Plugin) After() []interface{} {
 
 func (p *Plugin) OnRegister() {
 	p.AdminNames.OnInitResources(p, func(e *adminplugin.AdminEvent) {
-		e.Admin.AddResource(&QorAddress{}, &adminplugin.Config{Setup: PrepareResource})
+		e.Admin.AddResource(&Address{}, &adminplugin.Config{Setup: PrepareResource, Invisible: true})
 	})
 	db.Events(p).DBOnMigrateGorm(func(e *db.GormDBEvent) error {
-		return e.DB.AutoMigrate(&QorAddress{}, &QorAddressPhone{}).Error
+		return e.DB.AutoMigrate(&Address{}, &AddressPhone{}).Error
 	})
 }
