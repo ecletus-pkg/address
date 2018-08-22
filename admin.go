@@ -5,7 +5,7 @@ import (
 	"github.com/aghape-pkg/phone"
 	"github.com/aghape/admin"
 	"github.com/aghape/admin/admincommon"
-	"github.com/aghape/aghape"
+	"github.com/aghape/core"
 )
 
 type AddressGetter interface {
@@ -36,7 +36,7 @@ func PrepareResource(res *admin.Resource) {
 			Layout:             admin.BASIC_LAYOUT_HTML_WITH_ICON,
 			RemoteDataResource: admin.NewDataResource(countryRes),
 		},
-		FormattedValuer: func(record interface{}, context *qor.Context) interface{} {
+		FormattedValuer: func(record interface{}, context *core.Context) interface{} {
 			if record != nil {
 				var adr *Address
 				if r, ok := record.(*Address); ok {
@@ -52,7 +52,7 @@ func PrepareResource(res *admin.Resource) {
 			}
 			return ""
 		},
-		Valuer: func(record interface{}, context *qor.Context) interface{} {
+		Valuer: func(record interface{}, context *core.Context) interface{} {
 			if record != nil {
 				var adr *Address
 				if r, ok := record.(*Address); ok {
