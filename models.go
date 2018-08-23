@@ -5,8 +5,6 @@ import (
 
 	"github.com/aghape-pkg/geocode"
 	"github.com/aghape-pkg/phone"
-	"github.com/aghape/db/common"
-	"github.com/aghape/db/common/mixins"
 	"github.com/aghape/db/common/utils"
 	"github.com/moisespsena-go/aorm"
 )
@@ -21,8 +19,7 @@ func (p *AddressPhone) Clean(db *aorm.DB) {
 }
 
 type Address struct {
-	common.Model
-	mixins.CreationUpdationMixin
+	aorm.AuditedModel
 	Phones       []AddressPhone         `gorm:"foreignkey:AddressID"`
 	ContactName  string                 `gorm:"size:255"`
 	RegionID     string                 `gorm:"size:10"`
