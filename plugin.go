@@ -3,7 +3,7 @@ package address
 import (
 	"github.com/aghape-pkg/geocode"
 	"github.com/aghape-pkg/phone"
-	"github.com/aghape/admin/adminplugin"
+	"github.com/aghape-pkg/admin"
 	"github.com/aghape/db"
 	"github.com/aghape/plug"
 )
@@ -11,7 +11,7 @@ import (
 type Plugin struct {
 	plug.EventDispatcher
 	db.DBNames
-	adminplugin.AdminNames
+	admin_plugin.AdminNames
 }
 
 func (Plugin) After() []interface{} {
@@ -19,8 +19,8 @@ func (Plugin) After() []interface{} {
 }
 
 func (p *Plugin) OnRegister() {
-	p.AdminNames.OnInitResources(p, func(e *adminplugin.AdminEvent) {
-		e.Admin.AddResource(&Address{}, &adminplugin.Config{Setup: PrepareResource, Invisible: true})
+	admin_plugin.Events(p).InitResources(func(e *admin_plugin.AdminEvent) {
+		e.Admin.AddResource(&Address{}, &admin_plugin.Config{Setup: PrepareResource, Invisible: true})
 	})
 	db.Events(p).DBOnMigrateGorm(func(e *db.GormDBEvent) error {
 		return e.DB.AutoMigrate(&Address{}, &AddressPhone{}).Error
