@@ -5,7 +5,6 @@ import (
 	"github.com/aghape-pkg/phone"
 	"github.com/aghape/admin"
 	"github.com/aghape/admin/admincommon"
-	"github.com/aghape/core"
 )
 
 type AddressGetter interface {
@@ -26,56 +25,10 @@ func AddSubResource(res *admin.Resource, value interface{}, fieldName ...string)
 }
 
 func PrepareResource(res *admin.Resource) {
-	Admin := res.GetAdmin()
 	admincommon.RecordInfoFields(res)
 	phone.AddSubResource(res, &AddressPhone{})
-	countryRes := geocode.GetCountryResource(Admin)
-	countryMeta := res.SetMeta(&admin.Meta{
-		Name: "Country",
-		Config: &admin.SelectOneConfig{
-			Layout:             admin.BASIC_LAYOUT_HTML_WITH_ICON,
-			RemoteDataResource: admin.NewDataResource(countryRes),
-		},
-		FormattedValuer: func(record interface{}, context *core.Context) interface{} {
-			if record != nil {
-				var adr *Address
-				if r, ok := record.(*Address); ok {
-					adr = r
-				} else if r, ok := record.(AddressGetter); ok {
-					adr = r.GetQorAddress()
-				}
-				if adr != nil && adr.Region != nil {
-					if adr.Region.Country != nil {
-						return adr.Region.Country.Name
-					}
-				}
-			}
-			return ""
-		},
-		Valuer: func(record interface{}, context *core.Context) interface{} {
-			if record != nil {
-				var adr *Address
-				if r, ok := record.(*Address); ok {
-					adr = r
-				} else if r, ok := record.(AddressGetter); ok {
-					adr = r.GetQorAddress()
-				}
-				if adr != nil && adr.Region != nil {
-					return adr.Region.CountryID
-				}
-			}
-			return ""
-		},
-	})
-
-	regionRes := geocode.GetRegionsResource(Admin)
-	res.SetMeta(&admin.Meta{
-		Name:       "Region",
-		Resource:   regionRes,
-		Dependency: []interface{}{&admin.DependencyParent{countryMeta}},
-	})
-
-	res.ShowAttrs("ContactName", "Country", "Region", "AddressLine1", "AddressLine2", "Phones")
+	geocode.InitRegionMeta(res)
+	res.ShowAttrs("ContactName", geocode.COUNTRY, geocode.REGION, "AddressLine1", "AddressLine2", "Phones")
 	res.EditAttrs(res.ShowAttrs())
 	res.NewAttrs(res.EditAttrs())
 }

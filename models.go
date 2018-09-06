@@ -23,9 +23,13 @@ type Address struct {
 	Phones       []AddressPhone         `gorm:"foreignkey:AddressID"`
 	ContactName  string                 `gorm:"size:255"`
 	RegionID     string                 `gorm:"size:10"`
-	Region       *geocode.GeoCodeRegion `gorm:"SAVE_ASSOCIATIONS:false"`
+	Region       *geocode.GeoCodeRegion `gorm:"SAVE_ASSOCIATIONS:false;preload:*"`
 	AddressLine1 string                 `gorm:"size:255"`
 	AddressLine2 string                 `gorm:"size:255"`
+}
+
+func (Address) GetGormInlinePreloadFields() []string {
+	return []string{"Region"}
 }
 
 func (e *Address) Clean(db *aorm.DB) {
