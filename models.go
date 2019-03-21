@@ -3,9 +3,9 @@ package address
 import (
 	"strings"
 
-	"github.com/aghape-pkg/geocode"
-	"github.com/aghape-pkg/phone"
-	"github.com/aghape/db/common/utils"
+	"github.com/ecletus-pkg/geocode"
+	"github.com/ecletus-pkg/phone"
+	"github.com/ecletus/db/common/utils"
 	"github.com/moisespsena-go/aorm"
 )
 
