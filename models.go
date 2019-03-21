@@ -15,7 +15,7 @@ type AddressPhone struct {
 }
 
 func (p *AddressPhone) Clean(db *aorm.DB) {
-	utils.TrimStrings(&p.Note, &p.Phone.Phone)
+	utils.TrimStrings(&p.Note, &p.Phone.Number)
 }
 
 type Address struct {
@@ -23,40 +23,44 @@ type Address struct {
 	Phones       []AddressPhone         `gorm:"foreignkey:AddressID"`
 	ContactName  string                 `gorm:"size:255"`
 	RegionID     string                 `gorm:"size:10"`
-	Region       *geocode.GeoCodeRegion `gorm:"SAVE_ASSOCIATIONS:false;preload:*"`
+	Region       *geocode.GeoCodeRegion `gorm:"SAVE_ASSOCIATIONS:false"`
 	AddressLine1 string                 `gorm:"size:255"`
 	AddressLine2 string                 `gorm:"size:255"`
+	AddressLine3 string                 `gorm:"size:255"`
+	AddressLine4 string                 `gorm:"size:255"`
+	Cep          string                 `gorm:"size:32"`
 }
 
 func (Address) GetGormInlinePreloadFields() []string {
-	return []string{"Region"}
+	return []string{"*", "Region"}
 }
 
 func (e *Address) Clean(db *aorm.DB) {
-	utils.TrimStrings(&e.ContactName, &e.AddressLine1, &e.AddressLine2)
+	utils.TrimStrings(&e.ContactName, &e.AddressLine1, &e.AddressLine2, &e.AddressLine3, &e.Cep)
 }
 
-func (a *Address) Stringify() string {
+func (a *Address) String() string {
 	var parts []string
-	if a.ContactName != "" {
-		parts = append(parts, a.ContactName)
-	}
-
-	var parts2 []string
 
 	if a.Region != nil {
-		parts2 = append(parts2, a.Region.Country.Name+", "+a.Region.Name)
+		parts = append(parts, a.Region.Country.Name+", "+a.Region.Name)
 	}
 	if a.AddressLine1 != "" {
-		parts2 = append(parts2, a.AddressLine1)
+		parts = append(parts, a.AddressLine1)
 	}
 	if a.AddressLine2 != "" {
-		parts2 = append(parts2, a.AddressLine2)
+		parts = append(parts, a.AddressLine2)
+	}
+	if a.AddressLine3 != "" {
+		parts = append(parts, a.AddressLine3)
+	}
+	if a.AddressLine4 != "" {
+		parts = append(parts, a.AddressLine4)
 	}
 
-	if len(parts2) > 0 {
-		parts = append(parts, strings.Join(parts2, ", "))
+	if a.ContactName != "" {
+		parts = append(parts, "("+a.ContactName+")")
 	}
 
-	return strings.Join(parts, ": ")
+	return strings.Join(parts, ", ")
 }
