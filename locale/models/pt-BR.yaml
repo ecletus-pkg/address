@@ -8,4 +8,4 @@ Address:
     AddressLine2: "Endereço Linha 2 (ex: complemento)"
     AddressLine3: "Endereço Linha 3 (ex: bairro ou nome da zona rural)"
     AddressLine4: "Endereço Linha 4 (ex: municipio)"
-    Cep: CEP
+    Zip: CEP

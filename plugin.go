@@ -1,9 +1,9 @@
 package address
 
 import (
+	"github.com/ecletus-pkg/admin"
 	"github.com/ecletus-pkg/geocode"
 	"github.com/ecletus-pkg/phone"
-	"github.com/ecletus-pkg/admin"
 	"github.com/ecletus/db"
 	"github.com/ecletus/plug"
 )
@@ -23,6 +23,6 @@ func (p *Plugin) OnRegister() {
 		e.Admin.AddResource(&Address{}, &admin_plugin.Config{Setup: PrepareResource, Invisible: true})
 	})
 	db.Events(p).DBOnMigrate(func(e *db.DBEvent) error {
-		return e.AutoMigrate(&Address{}, &AddressPhone{}).Error
+		return e.AutoMigrate(&Address{}, &Phone{}).Error
 	})
 }

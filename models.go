@@ -7,36 +7,37 @@ import (
 	"github.com/ecletus-pkg/phone"
 	"github.com/ecletus/db/common/utils"
 	"github.com/moisespsena-go/aorm"
+	"github.com/moisespsena-go/bid"
 )
 
-type AddressPhone struct {
+type Phone struct {
 	phone.Phone
-	AddressID string `gorm:"size:24"`
+	AddressID bid.BID
 }
 
-func (p *AddressPhone) Clean(db *aorm.DB) {
+func (p *Phone) Clean(db *aorm.DB) {
 	utils.TrimStrings(&p.Note, &p.Phone.Number)
 }
 
 type Address struct {
 	aorm.AuditedModel
-	Phones       []AddressPhone         `gorm:"foreignkey:AddressID"`
-	ContactName  string                 `gorm:"size:255"`
-	RegionID     string                 `gorm:"size:10"`
-	Region       *geocode.GeoCodeRegion `gorm:"SAVE_ASSOCIATIONS:false"`
-	AddressLine1 string                 `gorm:"size:255"`
-	AddressLine2 string                 `gorm:"size:255"`
-	AddressLine3 string                 `gorm:"size:255"`
-	AddressLine4 string                 `gorm:"size:255"`
-	Cep          string                 `gorm:"size:32"`
+	Phones       []Phone         `aorm:"fkc:{field:AddressID;cascade}"`
+	ContactName  string          `aorm:"size:255"`
+	RegionID     string          `aorm:"size:10"`
+	Region       *geocode.Region `aorm:"save_associations:false"`
+	AddressLine1 string          `aorm:"size:255"`
+	AddressLine2 string          `aorm:"size:255"`
+	AddressLine3 string          `aorm:"size:255"`
+	AddressLine4 string          `aorm:"size:255"`
+	Zip          string          `aorm:"size:32"`
 }
 
-func (Address) GetGormInlinePreloadFields() []string {
+func (Address) GetAormInlinePreloadFields() []string {
 	return []string{"*", "Region"}
 }
 
 func (e *Address) Clean(db *aorm.DB) {
-	utils.TrimStrings(&e.ContactName, &e.AddressLine1, &e.AddressLine2, &e.AddressLine3, &e.Cep)
+	utils.TrimStrings(&e.ContactName, &e.AddressLine1, &e.AddressLine2, &e.AddressLine3, &e.Zip)
 }
 
 func (a *Address) String() string {
